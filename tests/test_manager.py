@@ -153,7 +153,7 @@ def test_delete_task_should_return_status_204():
 
 def test_delete_task_should_return_status_404_if_task_not_found():
     client = TestClient(app)
-    response = client.delete("/tasks/task_id")
+    response = client.delete("/tasks/8415b9a1-cca3-40c2-af7b-1ad689889fba")
     assert response.status_code == 404
 
 
