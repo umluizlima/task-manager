@@ -39,16 +39,15 @@ def create(task: TaskInput):
 
 @app.delete("/tasks/{task_id}", status_code=204)
 def delete(task_id: UUID):
-    task = next(
-        (task for task in TASKS if task["id"] == task_id),
-        None)
-    if task is None:
-        raise HTTPException(status_code=404, detail="Task not found")
-    return TASKS.remove(task)
+    return TASKS.remove(find_task_by_id(task_id))
 
 
 @app.get("/tasks/{task_id}", response_model=Task)
 def read(task_id: UUID):
+    return find_task_by_id(task_id)
+
+
+def find_task_by_id(task_id):
     task = next(
         (task for task in TASKS if task["id"] == task_id),
         None)
