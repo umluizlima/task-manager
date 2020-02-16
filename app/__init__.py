@@ -1,6 +1,7 @@
 from enum import Enum
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, constr
+from typing import List
 from uuid import UUID, uuid4
 
 TASKS = []
@@ -24,7 +25,7 @@ class Task(TaskInput):
 app = FastAPI()
 
 
-@app.get("/tasks")
+@app.get("/tasks", response_model=List[Task])
 def list():
     return TASKS
 

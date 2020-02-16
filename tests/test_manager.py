@@ -23,7 +23,12 @@ def test_task_list_should_return_list():
 
 
 def test_listed_task_should_have_id():
-    TASKS.append({"id": 1})
+    task = {
+        "id": "8415b9a1-cca3-40c2-af7b-1ad689889fba",
+        "title": "Title",
+        "description": "Description"
+    }
+    TASKS.append(task)
     client = TestClient(app)
     response = client.get("/tasks")
     assert "id" in response.json().pop()
@@ -31,7 +36,12 @@ def test_listed_task_should_have_id():
 
 
 def test_listed_task_should_have_title():
-    TASKS.append({"title": "Title"})
+    task = {
+        "id": "8415b9a1-cca3-40c2-af7b-1ad689889fba",
+        "title": "Title",
+        "description": "Description"
+    }
+    TASKS.append(task)
     client = TestClient(app)
     response = client.get("/tasks")
     assert "title" in response.json().pop()
@@ -39,7 +49,12 @@ def test_listed_task_should_have_title():
 
 
 def test_listed_task_should_have_description():
-    TASKS.append({"description": "Description"})
+    task = {
+        "id": "8415b9a1-cca3-40c2-af7b-1ad689889fba",
+        "title": "Title",
+        "description": "Description"
+    }
+    TASKS.append(task)
     client = TestClient(app)
     response = client.get("/tasks")
     assert "description" in response.json().pop()
@@ -47,7 +62,12 @@ def test_listed_task_should_have_description():
 
 
 def test_listed_task_should_have_status():
-    TASKS.append({"status": "Done"})
+    task = {
+        "id": "8415b9a1-cca3-40c2-af7b-1ad689889fba",
+        "title": "Title",
+        "description": "Description"
+    }
+    TASKS.append(task)
     client = TestClient(app)
     response = client.get("/tasks")
     assert "status" in response.json().pop()
