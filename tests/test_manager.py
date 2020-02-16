@@ -121,7 +121,7 @@ def test_created_task_should_have_default_status_todo():
 
 def test_created_task_should_return_status_201():
     client = TestClient(app)
-    task = {"title": "Titulo", "description": "Description"}
+    task = {"title": "Title", "description": "Description"}
     response = client.post("/tasks", json=task)
     assert response.status_code == 201
     TASKS.clear()
@@ -133,4 +133,34 @@ def test_created_task_should_be_persisted():
     response = client.post("/tasks", json=task)
     assert response.status_code == 201
     assert len(TASKS) == 1
+    TASKS.clear()
+
+
+def test_delete_task_endpoint_should_accept_delete():
+    client = TestClient(app)
+    response = client.delete("/tasks/task_id")
+    assert response.status_code != 405
+
+
+def test_delete_task_should_return_status_204():
+    client = TestClient(app)
+    task = {"title": "Title", "description": "Description"}
+    created_task = client.post("/tasks", json=task).json()
+    response = client.delete(f'/tasks/{created_task["id"]}')
+    assert response.status_code == 204
+    TASKS.clear()
+
+
+def test_delete_task_should_return_status_404_if_task_not_found():
+    client = TestClient(app)
+    response = client.delete("/tasks/task_id")
+    assert response.status_code == 404
+
+
+def test_delete_task_should_remove_task_from_persistence():
+    client = TestClient(app)
+    task = {"title": "Title", "description": "Description"}
+    created_task = client.post("/tasks", json=task).json()
+    client.delete(f'/tasks/{created_task["id"]}')
+    assert len(TASKS) == 0
     TASKS.clear()

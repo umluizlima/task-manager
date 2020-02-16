@@ -1,5 +1,5 @@
 from enum import Enum
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, constr
 from uuid import UUID, uuid4
 
@@ -35,3 +35,13 @@ def create(task: TaskInput):
     new_task.update({"id": uuid4()})
     TASKS.append(new_task)
     return new_task
+
+
+@app.delete("/tasks/{task_id}", status_code=204)
+def delete(task_id):
+    task = next(
+        (task for task in TASKS if str(task["id"]) == task_id),
+        None)
+    if task is None:
+        raise HTTPException(status_code=404, detail="Task not found")
+    return TASKS.remove(task)
