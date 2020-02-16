@@ -7,14 +7,14 @@ TASKS = []
 
 
 class TaskStatus(str, Enum):
-    OPEN = "OPEN"
-    CLOSED = "CLOSED"
+    TODO = "TODO"
+    DONE = "DONE"
 
 
 class TaskInput(BaseModel):
     title: constr(min_length=3, max_length=50)
     description: constr(max_length=140)
-    status: TaskStatus = TaskStatus.OPEN
+    status: TaskStatus = TaskStatus.TODO
 
 
 class Task(TaskInput):

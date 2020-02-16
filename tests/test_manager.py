@@ -111,11 +111,11 @@ def test_created_task_should_have_unique_id():
     TASKS.clear()
 
 
-def test_created_task_should_have_default_status_open():
+def test_created_task_should_have_default_status_todo():
     client = TestClient(app)
     task = {"title": "Title", "description": "Description"}
     response = client.post("/tasks", json=task)
-    assert response.json()["status"] == "OPEN"
+    assert response.json()["status"] == "TODO"
     TASKS.clear()
 
 
