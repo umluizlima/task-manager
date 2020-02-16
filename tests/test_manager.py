@@ -164,3 +164,32 @@ def test_delete_task_should_remove_task_from_persistence():
     client.delete(f'/tasks/{created_task["id"]}')
     assert len(TASKS) == 0
     TASKS.clear()
+
+
+def test_read_task_endpoint_should_accept_get():
+    client = TestClient(app)
+    response = client.get("/tasks/task_id")
+    assert response.status_code != 405
+
+
+def test_read_task_should_return_status_404_if_task_not_found():
+    client = TestClient(app)
+    response = client.get("/tasks/8415b9a1-cca3-40c2-af7b-1ad689889fba")
+    assert response.status_code == 404
+
+
+def test_read_task_should_return_status_200_if_task_found():
+    client = TestClient(app)
+    task = {"title": "Title", "description": "Description"}
+    created_task = client.post("/tasks", json=task).json()
+    response = client.get(f'/tasks/{created_task["id"]}')
+    assert response.status_code == 200
+
+
+def test_read_task_should_return_task_if_found():
+    client = TestClient(app)
+    task = {"title": "Title", "description": "Description"}
+    created_task = client.post("/tasks", json=task).json()
+    response = client.get(f'/tasks/{created_task["id"]}')
+    assert response.json()["title"] == task["title"]
+    assert response.json()["description"] == task["description"]
