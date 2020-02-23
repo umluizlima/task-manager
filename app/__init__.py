@@ -30,7 +30,7 @@ def list():
     return TASKS
 
 
-@app.post('/tasks', response_model=Task, status_code=201)
+@app.post("/tasks", response_model=Task, status_code=201)
 def create(task: TaskInput):
     new_task = task.dict()
     new_task.update({"id": uuid4()})
@@ -49,9 +49,7 @@ def read(task_id: UUID):
 
 
 def find_task_by_id(task_id):
-    task = next(
-        (task for task in TASKS if task["id"] == task_id),
-        None)
+    task = next((task for task in TASKS if task["id"] == task_id), None)
     if task is None:
         raise HTTPException(status_code=404, detail="Task not found")
     return task

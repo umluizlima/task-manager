@@ -26,7 +26,7 @@ def test_listed_task_should_have_id():
     task = {
         "id": "8415b9a1-cca3-40c2-af7b-1ad689889fba",
         "title": "Title",
-        "description": "Description"
+        "description": "Description",
     }
     TASKS.append(task)
     client = TestClient(app)
@@ -39,7 +39,7 @@ def test_listed_task_should_have_title():
     task = {
         "id": "8415b9a1-cca3-40c2-af7b-1ad689889fba",
         "title": "Title",
-        "description": "Description"
+        "description": "Description",
     }
     TASKS.append(task)
     client = TestClient(app)
@@ -52,7 +52,7 @@ def test_listed_task_should_have_description():
     task = {
         "id": "8415b9a1-cca3-40c2-af7b-1ad689889fba",
         "title": "Title",
-        "description": "Description"
+        "description": "Description",
     }
     TASKS.append(task)
     client = TestClient(app)
@@ -65,7 +65,7 @@ def test_listed_task_should_have_status():
     task = {
         "id": "8415b9a1-cca3-40c2-af7b-1ad689889fba",
         "title": "Title",
-        "description": "Description"
+        "description": "Description",
     }
     TASKS.append(task)
     client = TestClient(app)
@@ -106,9 +106,7 @@ def test_task_should_have_description():
 
 def test_task_description_should_have_at_most_140_characters():
     client = TestClient(app)
-    response = client.post(
-        "/tasks",
-        json={"title": "Title", "description": "*" * 141})
+    response = client.post("/tasks", json={"title": "Title", "description": "*" * 141})
     assert response.status_code == 422
 
 
