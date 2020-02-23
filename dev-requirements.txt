@@ -1,5 +1,5 @@
 -r requirements.txt
-flake8==3.7.9
+black==19.10b0
 httpie==2.0.0
 pytest==5.3.5
 pytest-cov==2.8.1
