@@ -4,10 +4,9 @@ from pydantic import BaseModel, constr
 from typing import List
 from uuid import UUID, uuid4
 
+from .database import TASKS
 from .enums import TaskStatus
 from .schemas import Task, TaskCreate, TaskUpdate
-
-TASKS = []
 
 app = FastAPI()
 
