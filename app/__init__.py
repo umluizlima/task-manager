@@ -1,5 +1,6 @@
 from enum import Enum
 from fastapi import FastAPI, HTTPException
+from operator import itemgetter
 from pydantic import BaseModel, constr
 from typing import List
 from uuid import UUID, uuid4
@@ -37,7 +38,7 @@ app = FastAPI()
 
 @app.get("/tasks", response_model=List[Task])
 def list():
-    return TASKS
+    return sorted(TASKS, key=lambda task: task["status"].value, reverse=True)
 
 
 @app.post("/tasks", response_model=Task, status_code=201)

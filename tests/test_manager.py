@@ -1,7 +1,7 @@
 from starlette.testclient import TestClient
 from starlette.status import HTTP_200_OK
 
-from app import app, TASKS
+from app import app, TASKS, TaskStatus
 
 
 def setup_function(function):
@@ -31,6 +31,7 @@ def test_listed_task_should_have_id():
         "id": "8415b9a1-cca3-40c2-af7b-1ad689889fba",
         "title": "Title",
         "description": "Description",
+        "status": TaskStatus.TODO,
     }
     TASKS.append(task)
     client = TestClient(app)
@@ -43,6 +44,7 @@ def test_listed_task_should_have_title():
         "id": "8415b9a1-cca3-40c2-af7b-1ad689889fba",
         "title": "Title",
         "description": "Description",
+        "status": TaskStatus.TODO,
     }
     TASKS.append(task)
     client = TestClient(app)
@@ -55,6 +57,7 @@ def test_listed_task_should_have_description():
         "id": "8415b9a1-cca3-40c2-af7b-1ad689889fba",
         "title": "Title",
         "description": "Description",
+        "status": TaskStatus.TODO,
     }
     TASKS.append(task)
     client = TestClient(app)
@@ -67,11 +70,22 @@ def test_listed_task_should_have_status():
         "id": "8415b9a1-cca3-40c2-af7b-1ad689889fba",
         "title": "Title",
         "description": "Description",
+        "status": TaskStatus.TODO,
     }
     TASKS.append(task)
     client = TestClient(app)
     response = client.get("/tasks")
     assert "status" in response.json().pop()
+
+
+def test_listed_tasks_should_be_ordered_by_status_todo():
+    client = TestClient(app)
+    task1 = {"title": "Title 1", "description": "Description1", "status": "DONE"}
+    client.post("/tasks", json=task1)
+    task2 = {"title": "Title 2", "description": "Description2", "status": "TODO"}
+    client.post("/tasks", json=task2)
+    response = client.get("/tasks")
+    assert response.json()[0]["status"] == "TODO"
 
 
 def test_task_endpoint_should_accept_post():
