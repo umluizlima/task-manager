@@ -60,7 +60,6 @@ def read(task_id: UUID):
 
 @app.put("/tasks/{task_id}", response_model=Task)
 def update(task_id: UUID, task: TaskUpdate):
-    print(TASKS)
     stored_task_data = find_task_by_id(task_id)
     stored_task_model = Task(**stored_task_data)
     update_data = task.dict(exclude_unset=True)
