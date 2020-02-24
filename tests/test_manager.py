@@ -4,6 +4,10 @@ from starlette.status import HTTP_200_OK
 from app import app, TASKS
 
 
+def setup_function(function):
+    TASKS.clear()
+
+
 def test_task_list_should_return_status_200():
     client = TestClient(app)
     response = client.get("/tasks")
@@ -32,7 +36,6 @@ def test_listed_task_should_have_id():
     client = TestClient(app)
     response = client.get("/tasks")
     assert "id" in response.json().pop()
-    TASKS.clear()
 
 
 def test_listed_task_should_have_title():
@@ -45,7 +48,6 @@ def test_listed_task_should_have_title():
     client = TestClient(app)
     response = client.get("/tasks")
     assert "title" in response.json().pop()
-    TASKS.clear()
 
 
 def test_listed_task_should_have_description():
@@ -58,7 +60,6 @@ def test_listed_task_should_have_description():
     client = TestClient(app)
     response = client.get("/tasks")
     assert "description" in response.json().pop()
-    TASKS.clear()
 
 
 def test_listed_task_should_have_status():
@@ -71,7 +72,6 @@ def test_listed_task_should_have_status():
     client = TestClient(app)
     response = client.get("/tasks")
     assert "status" in response.json().pop()
-    TASKS.clear()
 
 
 def test_task_endpoint_should_accept_post():
@@ -116,7 +116,6 @@ def test_created_task_should_be_returned():
     response = client.post("/tasks", json=task)
     assert response.json()["title"] == task["title"]
     assert response.json()["description"] == task["description"]
-    TASKS.clear()
 
 
 def test_created_task_should_have_unique_id():
@@ -126,7 +125,6 @@ def test_created_task_should_have_unique_id():
     response1 = client.post("/tasks", json=task1)
     response2 = client.post("/tasks", json=task2)
     assert response1.json()["id"] != response2.json()["id"]
-    TASKS.clear()
 
 
 def test_created_task_should_have_default_status_todo():
@@ -134,7 +132,6 @@ def test_created_task_should_have_default_status_todo():
     task = {"title": "Title", "description": "Description"}
     response = client.post("/tasks", json=task)
     assert response.json()["status"] == "TODO"
-    TASKS.clear()
 
 
 def test_created_task_should_return_status_201():
@@ -142,7 +139,6 @@ def test_created_task_should_return_status_201():
     task = {"title": "Title", "description": "Description"}
     response = client.post("/tasks", json=task)
     assert response.status_code == 201
-    TASKS.clear()
 
 
 def test_created_task_should_be_persisted():
@@ -151,7 +147,6 @@ def test_created_task_should_be_persisted():
     response = client.post("/tasks", json=task)
     assert response.status_code == 201
     assert len(TASKS) == 1
-    TASKS.clear()
 
 
 def test_delete_task_endpoint_should_accept_delete():
@@ -166,7 +161,6 @@ def test_delete_task_should_return_status_204():
     created_task = client.post("/tasks", json=task).json()
     response = client.delete(f'/tasks/{created_task["id"]}')
     assert response.status_code == 204
-    TASKS.clear()
 
 
 def test_delete_task_should_return_status_404_if_task_not_found():
@@ -181,7 +175,6 @@ def test_delete_task_should_remove_task_from_persistence():
     created_task = client.post("/tasks", json=task).json()
     client.delete(f'/tasks/{created_task["id"]}')
     assert len(TASKS) == 0
-    TASKS.clear()
 
 
 def test_read_task_endpoint_should_accept_get():
@@ -202,7 +195,6 @@ def test_read_task_should_return_status_200_if_task_found():
     created_task = client.post("/tasks", json=task).json()
     response = client.get(f'/tasks/{created_task["id"]}')
     assert response.status_code == 200
-    TASKS.clear()
 
 
 def test_read_task_should_return_task_if_found():
@@ -212,7 +204,6 @@ def test_read_task_should_return_task_if_found():
     response = client.get(f'/tasks/{created_task["id"]}')
     assert response.json()["title"] == task["title"]
     assert response.json()["description"] == task["description"]
-    TASKS.clear()
 
 
 def test_update_task_endpoint_should_accept_put():
@@ -236,7 +227,6 @@ def test_update_task_should_not_have_required_fields():
     update_fields = {}
     response = client.put(f'/tasks/{created_task["id"]}', json=update_fields)
     assert response.status_code != 422
-    TASKS.clear()
 
 
 def test_update_task_should_return_updated_task():
@@ -247,7 +237,6 @@ def test_update_task_should_return_updated_task():
     update_fields = {"title": "New title"}
     updated_task = client.put(f'/tasks/{created_task["id"]}', json=update_fields).json()
     assert updated_task["title"] == update_fields["title"]
-    TASKS.clear()
 
 
 def test_update_task_should_ignore_unknown_fields():
@@ -258,7 +247,6 @@ def test_update_task_should_ignore_unknown_fields():
     update_fields = {"unknown_field": "Field"}
     updated_task = client.put(f'/tasks/{created_task["id"]}', json=update_fields).json()
     assert "unknown_field" not in updated_task.keys()
-    TASKS.clear()
 
 
 def test_update_task_should_return_status_200_if_successful():
@@ -269,4 +257,3 @@ def test_update_task_should_return_status_200_if_successful():
     update_fields = {"unknown_field": "Field"}
     response = client.put(f'/tasks/{created_task["id"]}', json=update_fields)
     assert response.status_code == 200
-    TASKS.clear()
