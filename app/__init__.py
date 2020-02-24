@@ -58,6 +58,18 @@ def read(task_id: UUID):
     return find_task_by_id(task_id)
 
 
+@app.put("/tasks/{task_id}", response_model=Task)
+def update(task_id: UUID, task: TaskUpdate):
+    print(TASKS)
+    stored_task_data = find_task_by_id(task_id)
+    stored_task_model = Task(**stored_task_data)
+    update_data = task.dict(exclude_unset=True)
+    updated_task = stored_task_model.copy(update=update_data)
+    TASKS[TASKS.index(stored_task_data)] = updated_task.dict()
+
+    return updated_task
+
+
 def find_task_by_id(task_id):
     task = next((task for task in TASKS if task["id"] == task_id), None)
     if task is None:

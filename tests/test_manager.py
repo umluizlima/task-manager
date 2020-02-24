@@ -202,6 +202,7 @@ def test_read_task_should_return_status_200_if_task_found():
     created_task = client.post("/tasks", json=task).json()
     response = client.get(f'/tasks/{created_task["id"]}')
     assert response.status_code == 200
+    TASKS.clear()
 
 
 def test_read_task_should_return_task_if_found():
@@ -211,3 +212,61 @@ def test_read_task_should_return_task_if_found():
     response = client.get(f'/tasks/{created_task["id"]}')
     assert response.json()["title"] == task["title"]
     assert response.json()["description"] == task["description"]
+    TASKS.clear()
+
+
+def test_update_task_endpoint_should_accept_put():
+    client = TestClient(app)
+    response = client.put("/tasks/task_id")
+    assert response.status_code != 405
+
+
+def test_update_task_should_return_status_404_if_task_not_found():
+    client = TestClient(app)
+    task = {"title": "Title", "description": "Description"}
+    response = client.put("/tasks/8415b9a1-cca3-40c2-af7b-1ad689889fba", json=task)
+    assert response.status_code == 404
+
+
+def test_update_task_should_not_have_required_fields():
+    client = TestClient(app)
+    task = {"title": "Title", "description": "Description"}
+    created_task = client.post("/tasks", json=task).json()
+
+    update_fields = {}
+    response = client.put(f'/tasks/{created_task["id"]}', json=update_fields)
+    assert response.status_code != 422
+    TASKS.clear()
+
+
+def test_update_task_should_return_updated_task():
+    client = TestClient(app)
+    task = {"title": "Title", "description": "Description"}
+    created_task = client.post("/tasks", json=task).json()
+
+    update_fields = {"title": "New title"}
+    updated_task = client.put(f'/tasks/{created_task["id"]}', json=update_fields).json()
+    assert updated_task["title"] == update_fields["title"]
+    TASKS.clear()
+
+
+def test_update_task_should_ignore_unknown_fields():
+    client = TestClient(app)
+    task = {"title": "Title", "description": "Description"}
+    created_task = client.post("/tasks", json=task).json()
+
+    update_fields = {"unknown_field": "Field"}
+    updated_task = client.put(f'/tasks/{created_task["id"]}', json=update_fields).json()
+    assert "unknown_field" not in updated_task.keys()
+    TASKS.clear()
+
+
+def test_update_task_should_return_status_200_if_successful():
+    client = TestClient(app)
+    task = {"title": "Title", "description": "Description"}
+    created_task = client.post("/tasks", json=task).json()
+
+    update_fields = {"unknown_field": "Field"}
+    response = client.put(f'/tasks/{created_task["id"]}', json=update_fields)
+    assert response.status_code == 200
+    TASKS.clear()
