@@ -1,5 +1,5 @@
 # task-manager
-Application to manage tasks
+Application to manage tasks built following [cassiobotaro/do_zero_a_implantacao](https://github.com/cassiobotaro/do_zero_a_implantacao/blob/master/README.md)
 
 ## Development
 
