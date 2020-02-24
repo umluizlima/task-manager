@@ -21,3 +21,5 @@ python -m pytest --cov=app
 ```console
 uvicorn --reload app:app
 ```
+
+Access the API documentation on http://localhost:8000/docs
