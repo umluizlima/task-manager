@@ -1,7 +1,8 @@
 from starlette.testclient import TestClient
 from starlette.status import HTTP_200_OK
 
-from app import app, TASKS, TaskStatus
+from app import app, TASKS
+from app.enums import TaskStatus
 
 
 def setup_function(function):

@@ -5,12 +5,9 @@ from pydantic import BaseModel, constr
 from typing import List
 from uuid import UUID, uuid4
 
+from .enums import TaskStatus
+
 TASKS = []
-
-
-class TaskStatus(str, Enum):
-    TODO = "TODO"
-    DONE = "DONE"
 
 
 class TaskBase(BaseModel):
