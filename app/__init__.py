@@ -12,13 +12,23 @@ class TaskStatus(str, Enum):
     DONE = "DONE"
 
 
-class TaskInput(BaseModel):
+class TaskBase(BaseModel):
     title: constr(min_length=3, max_length=50)
     description: constr(max_length=140)
     status: TaskStatus = TaskStatus.TODO
 
 
-class Task(TaskInput):
+class TaskCreate(TaskBase):
+    pass
+
+
+class TaskUpdate(BaseModel):
+    title: constr(min_length=3, max_length=50) = None
+    description: constr(max_length=140) = None
+    status: TaskStatus = None
+
+
+class Task(TaskBase):
     id: UUID
 
 
@@ -31,7 +41,7 @@ def list():
 
 
 @app.post("/tasks", response_model=Task, status_code=201)
-def create(task: TaskInput):
+def create(task: TaskCreate):
     new_task = task.dict()
     new_task.update({"id": uuid4()})
     TASKS.append(new_task)
