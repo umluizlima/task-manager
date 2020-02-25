@@ -1,5 +1,7 @@
-TASKS = []
+db = {
+    "tasks": [],
+}
 
 
 def get_db():
-    yield TASKS
+    yield db

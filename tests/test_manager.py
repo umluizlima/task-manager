@@ -1,13 +1,17 @@
+from pytest import fixture
 from starlette.testclient import TestClient
 from starlette.status import HTTP_200_OK
 
 from app import app
-from app.database import TASKS
+from app.database import db
 from app.enums import TaskStatus
 
 
-def setup_function(function):
-    TASKS.clear()
+@fixture(autouse=True)
+def tasks():
+    tasks = db["tasks"]
+    yield tasks
+    tasks.clear()
 
 
 def test_task_list_should_return_status_200():
@@ -28,53 +32,53 @@ def test_task_list_should_return_list():
     assert isinstance(response.json(), list)
 
 
-def test_listed_task_should_have_id():
+def test_listed_task_should_have_id(tasks):
     task = {
         "id": "8415b9a1-cca3-40c2-af7b-1ad689889fba",
         "title": "Title",
         "description": "Description",
         "status": TaskStatus.TODO,
     }
-    TASKS.append(task)
+    tasks.append(task)
     client = TestClient(app)
     response = client.get("/tasks")
     assert "id" in response.json().pop()
 
 
-def test_listed_task_should_have_title():
+def test_listed_task_should_have_title(tasks):
     task = {
         "id": "8415b9a1-cca3-40c2-af7b-1ad689889fba",
         "title": "Title",
         "description": "Description",
         "status": TaskStatus.TODO,
     }
-    TASKS.append(task)
+    tasks.append(task)
     client = TestClient(app)
     response = client.get("/tasks")
     assert "title" in response.json().pop()
 
 
-def test_listed_task_should_have_description():
+def test_listed_task_should_have_description(tasks):
     task = {
         "id": "8415b9a1-cca3-40c2-af7b-1ad689889fba",
         "title": "Title",
         "description": "Description",
         "status": TaskStatus.TODO,
     }
-    TASKS.append(task)
+    tasks.append(task)
     client = TestClient(app)
     response = client.get("/tasks")
     assert "description" in response.json().pop()
 
 
-def test_listed_task_should_have_status():
+def test_listed_task_should_have_status(tasks):
     task = {
         "id": "8415b9a1-cca3-40c2-af7b-1ad689889fba",
         "title": "Title",
         "description": "Description",
         "status": TaskStatus.TODO,
     }
-    TASKS.append(task)
+    tasks.append(task)
     client = TestClient(app)
     response = client.get("/tasks")
     assert "status" in response.json().pop()
@@ -157,12 +161,12 @@ def test_created_task_should_return_status_201():
     assert response.status_code == 201
 
 
-def test_created_task_should_be_persisted():
+def test_created_task_should_be_persisted(tasks):
     client = TestClient(app)
     task = {"title": "Title", "description": "Description"}
     response = client.post("/tasks", json=task)
     assert response.status_code == 201
-    assert len(TASKS) == 1
+    assert len(tasks) == 1
 
 
 def test_delete_task_endpoint_should_accept_delete():
@@ -185,12 +189,12 @@ def test_delete_task_should_return_status_404_if_task_not_found():
     assert response.status_code == 404
 
 
-def test_delete_task_should_remove_task_from_persistence():
+def test_delete_task_should_remove_task_from_persistence(tasks):
     client = TestClient(app)
     task = {"title": "Title", "description": "Description"}
     created_task = client.post("/tasks", json=task).json()
     client.delete(f'/tasks/{created_task["id"]}')
-    assert len(TASKS) == 0
+    assert len(tasks) == 0
 
 
 def test_read_task_endpoint_should_accept_get():
