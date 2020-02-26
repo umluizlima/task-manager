@@ -10,7 +10,7 @@ Application to manage tasks built following [cassiobotaro/do_zero_a_implantacao]
 
 ### Installing
 ```console
-pip install -r dev-requirements.txt
+pip install -r requirements-dev.txt
 pre-commit install
 ```
 
