@@ -7,8 +7,11 @@ Application to manage tasks built following [cassiobotaro/do_zero_a_implantacao]
 
 ### Requirements
 - Python 3.7+
+- Docker
+- Docker Compose
 
 ### Installing
+Install dependencies
 ```console
 make install
 ```
@@ -19,8 +22,13 @@ make test
 ```
 
 ### Running
+Access the API documentation on http://localhost:8000/docs
 ```console
 make run
 ```
 
-Access the API documentation on http://localhost:8000/docs
+### Migrating
+Generate migration files automatically for changes to models. Make sure all models are imported on `database.py`
+```console
+make db_generate_migration description="your description"
+```
