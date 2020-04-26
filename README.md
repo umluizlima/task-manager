@@ -10,18 +10,17 @@ Application to manage tasks built following [cassiobotaro/do_zero_a_implantacao]
 
 ### Installing
 ```console
-pip install -r requirements-dev.txt
-pre-commit install
+make install
 ```
 
 ### Testing
 ```console
-python -m pytest --cov=app
+make test
 ```
 
 ### Running
 ```console
-uvicorn --reload app:app
+make run
 ```
 
 Access the API documentation on http://localhost:8000/docs
