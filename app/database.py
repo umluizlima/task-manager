@@ -33,3 +33,6 @@ def get_db():
             session.close()
     else:
         yield db
+
+
+from app.models import Task  # noqa
