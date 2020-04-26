@@ -24,11 +24,12 @@ Base = declarative_base()
 
 
 def get_db():
-    if not getenv("PERSISTENCE_ENABLED", default=False):
+    if getenv("PERSISTENCE_ENABLED", default=False):
+        SessionLocal = setup_db()
+        try:
+            session = SessionLocal()
+            yield session
+        finally:
+            session.close()
+    else:
         yield db
-    SessionLocal = setup_db()
-    try:
-        session = SessionLocal()
-        yield session
-    finally:
-        session.close()
