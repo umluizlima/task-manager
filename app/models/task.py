@@ -3,8 +3,9 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from uuid import uuid4
 
-from .database import Base
-from .enums import TaskStatus
+from app.enums import TaskStatus
+
+from .base import Base
 
 
 class Task(Base):
