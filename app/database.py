@@ -1,7 +1,6 @@
 from os import getenv
 
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 
@@ -10,29 +9,26 @@ db = {
 }
 
 
-def setup_db():
-    SQLALCHEMY_DATABASE_URL = getenv(
+def get_url():
+    return getenv(
         "DATABASE_URL", default="postgresql://postgres:postgres@localhost/task-manager",
     )
 
-    engine = create_engine(SQLALCHEMY_DATABASE_URL)
-    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-    return SessionLocal
 
-
-Base = declarative_base()
+engine = create_engine(get_url())
+Session = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
 def get_db():
     if getenv("PERSISTENCE_ENABLED", default=False):
-        SessionLocal = setup_db()
         try:
-            session = SessionLocal()
+            session = Session()
             yield session
+            session.commit()
+        except Exception as error:
+            session.rollback()
+            raise error
         finally:
             session.close()
     else:
         yield db
-
-
-from app.models import Task  # noqa
