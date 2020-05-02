@@ -6,7 +6,8 @@ from sqlalchemy import pool
 
 from alembic import context
 
-from app.database import Base
+from app.database import get_url
+from app.models.base import Base
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -27,12 +28,6 @@ target_metadata = Base.metadata
 # can be acquired:
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
-
-
-def get_url():
-    return getenv(
-        "DATABASE_URL", "postgresql://postgres:postgres@localhost/task-manager"
-    )
 
 
 def run_migrations_offline():
