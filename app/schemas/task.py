@@ -2,7 +2,7 @@ from pydantic import BaseModel, constr
 from typing import List
 from uuid import UUID, uuid4
 
-from .enums import TaskStatus
+from app.enums import TaskStatus
 
 
 class TaskBase(BaseModel):
