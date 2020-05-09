@@ -23,3 +23,6 @@ class TaskUpdate(TaskBase):
 
 class Task(TaskBase):
     id: UUID
+
+    class Config:
+        orm_mode = True

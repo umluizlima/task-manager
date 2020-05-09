@@ -5,3 +5,4 @@ httpie==2.0.0
 pre-commit==2.1.0
 pytest==5.4.1
 pytest-cov==2.8.1
+testcontainers==3.0.0

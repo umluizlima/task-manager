@@ -1,33 +1,41 @@
 from typing import Dict
 from uuid import UUID, uuid4
 
-from ..schemas import Task
+from sqlalchemy.orm import Session
+from sqlalchemy.orm.exc import NoResultFound
+
+from .. import models
 
 
-def get_by_id(db: Dict, task_id: UUID):
-    task = next((task for task in db["tasks"] if task["id"] == task_id), None)
-    if task is None:
-        raise Exception
-    return task
+class TasksRepository:
+    def __init__(self, session: Session):
+        self.session = session
 
+    def create(self, task: Dict):
+        db_task = models.Task(**task)
+        self.session.add(db_task)
+        self.session.commit()
+        self.session.refresh(db_task)
+        return db_task
 
-def get_all(db: Dict):
-    return db["tasks"]
+    def get_all(self):
+        return self.session.query(models.Task).all()
 
+    def get_by_id(self, id: UUID):
+        return self._filter_by_id_query(id).one()
 
-def create(db: Dict, task: Dict):
-    task.update({"id": uuid4()})
-    db["tasks"].append(task)
-    return task
+    def update(self, id: UUID, task: Dict):
+        updated_rows = self._filter_by_id_query(id).update(task)
+        if updated_rows == 0:
+            raise NoResultFound()
+        self.session.commit()
+        return self.get_by_id(id)
 
+    def delete(self, id: UUID):
+        deleted_rows = self._filter_by_id_query(id).delete()
+        if deleted_rows == 0:
+            raise NoResultFound()
+        self.session.commit()
 
-def update(db: Dict, task_id: UUID, task: Dict):
-    stored_task_data = get_by_id(db, task_id)
-    stored_task_model = Task(**stored_task_data)
-    updated_task = stored_task_model.copy(update=task)
-    db["tasks"][db["tasks"].index(stored_task_data)] = updated_task.dict()
-    return updated_task
-
-
-def delete(db: Dict, task_id: UUID):
-    db["tasks"].remove(get_by_id(db, task_id))
+    def _filter_by_id_query(self, id: UUID):
+        return self.session.query(models.Task).filter(models.Task.id == id)
