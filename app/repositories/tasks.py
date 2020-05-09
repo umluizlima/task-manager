@@ -1,33 +1,36 @@
 from typing import Dict
 from uuid import UUID, uuid4
 
-from ..schemas import Task
+from ..models import Task as TaskModel
+from ..schemas import Task as TaskSchema
 
 
-def get_by_id(db: Dict, task_id: UUID):
-    task = next((task for task in db["tasks"] if task["id"] == task_id), None)
-    if task is None:
-        raise Exception
-    return task
+class TasksRepository:
+    def __init__(self, db: Dict):
+        self.db = db
 
+    def get_by_id(self, task_id: UUID):
+        task = next((task for task in self.db["tasks"] if task.id == task_id), None)
+        if task is None:
+            raise Exception
+        return task
 
-def get_all(db: Dict):
-    return db["tasks"]
+    def get_all(self):
+        return self.db["tasks"]
 
+    def create(self, task: TaskModel):
+        task.id = uuid4()
+        self.db["tasks"].append(task)
+        return task
 
-def create(db: Dict, task: Dict):
-    task.update({"id": uuid4()})
-    db["tasks"].append(task)
-    return task
-
-
-def update(db: Dict, task_id: UUID, task: Dict):
-    stored_task_data = get_by_id(db, task_id)
-    stored_task_model = Task(**stored_task_data)
-    updated_task = stored_task_model.copy(update=task)
-    db["tasks"][db["tasks"].index(stored_task_data)] = updated_task.dict()
-    return updated_task
+    def update(self, task_id: UUID, task: TaskModel):
+        stored_task = self.get_by_id(task_id)
+        stored_task_model = TaskSchema(**stored_task)
+        updated_task = stored_task_model.copy(update=task)
+        # db["tasks"][db["tasks"].index(stored_task_data)] = updated_task.dict()
+        return updated_task
 
 
 def delete(db: Dict, task_id: UUID):
-    db["tasks"].remove(get_by_id(db, task_id))
+    # db["tasks"].remove(get_by_id(db, task_id))
+    pass
