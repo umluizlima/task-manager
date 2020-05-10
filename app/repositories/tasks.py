@@ -1,33 +1,41 @@
-from typing import Dict
-from uuid import UUID, uuid4
+from typing import Dict, List
+from uuid import UUID
 
-from ..schemas import Task
+from sqlalchemy.orm import Session
+from sqlalchemy.orm.exc import NoResultFound
 
-
-def get_by_id(db: Dict, task_id: UUID):
-    task = next((task for task in db["tasks"] if task["id"] == task_id), None)
-    if task is None:
-        raise Exception
-    return task
+from ..models import Task
 
 
-def get_all(db: Dict):
-    return db["tasks"]
+class TasksRepository:
+    def __init__(self, db: Session):
+        self.db = db
 
+    def save(self, task: Task):
+        self.db.add(task)
+        self.db.commit()
+        self.db.refresh(task)
+        return task
 
-def create(db: Dict, task: Dict):
-    task.update({"id": uuid4()})
-    db["tasks"].append(task)
-    return task
+    def find_all(self):
+        return self.db.query(Task).all()
 
+    def find_by_id(self, id: UUID):
+        return self._filter_by_id(id).one()
 
-def update(db: Dict, task_id: UUID, task: Dict):
-    stored_task_data = get_by_id(db, task_id)
-    stored_task_model = Task(**stored_task_data)
-    updated_task = stored_task_model.copy(update=task)
-    db["tasks"][db["tasks"].index(stored_task_data)] = updated_task.dict()
-    return updated_task
+    def delete_by_id(self, id: UUID):
+        if not self._filter_by_id(id).delete():
+            raise NoResultFound()
+        self.db.commit()
 
+    def create(self, data: Dict):
+        return self.save(Task(**data))
 
-def delete(db: Dict, task_id: UUID):
-    db["tasks"].remove(get_by_id(db, task_id))
+    def update_by_id(self, id: UUID, data: Dict):
+        if not self._filter_by_id(id).update(data):
+            raise NoResultFound()
+        self.db.commit()
+        return self.find_by_id(id)
+
+    def _filter_by_id(self, id: UUID):
+        return self.db.query(Task).filter(Task.id == id)
