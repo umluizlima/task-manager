@@ -1,5 +1,4 @@
 from os import environ, system
-from subprocess import run
 
 from pytest import fixture
 from sqlalchemy import create_engine
