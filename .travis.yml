@@ -1,8 +1,12 @@
 dist: xenial
+
+services:
+  - docker
+
 language: python
 python:
     - 3.7.6
 install:
   - pip install -r requirements-dev.txt
 script:
-  - python -m pytest --cov=app
+  - python -m pytest --cov=app tests/unit
