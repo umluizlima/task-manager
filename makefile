@@ -19,6 +19,8 @@ db_run_migrations: db_init
 
 .PHONY: test
 test:
+	PYTHONPATH=. && \
+	docker-compose down && \
 	python -m pytest --cov=app
 
 .PHONY: run
