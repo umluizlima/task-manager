@@ -1,4 +1,4 @@
-from os import environ
+from os import environ, system
 from subprocess import run
 
 from pytest import fixture
@@ -17,7 +17,7 @@ def setup():
     with postgres_container as postgres:
         environ["DATABASE_URL"] = postgres.get_connection_url()
         engine = create_engine(get_url())
-        run(["alembic", "upgrade", "head"])
+        system("alembic upgrade head")
         Session = sessionmaker(autocommit=False, autoflush=False, bind=engine)
         yield Session
 
