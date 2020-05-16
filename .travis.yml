@@ -9,4 +9,4 @@ python:
 install:
   - pip install -r requirements-dev.txt
 script:
-  - python -m pytest --cov=app tests
+  - PYTHONPATH=. pytest --cov=app tests
