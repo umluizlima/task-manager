@@ -9,18 +9,18 @@ db_init:
 
 .PHONY: db_generate_migration
 db_generate_migration: db_init
-	PYTHONPATH=. && \
+	PYTHONPATH=. \
 	alembic revision --autogenerate -m "$(description)"
 
 .PHONY: db_run_migrations
 db_run_migrations: db_init
-	PYTHONPATH=. && \
+	PYTHONPATH=. \
 	alembic upgrade head
 
 .PHONY: test
 test:
-	PYTHONPATH=. && \
 	docker-compose down && \
+	PYTHONPATH=. \
 	python -m pytest --cov=app
 
 .PHONY: run
